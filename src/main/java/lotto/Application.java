@@ -74,7 +74,7 @@ public class Application {
             }
         }
     }
-}
+
     private static java.util.List<java.util.List<Integer>> issueTickets(int count) {
         NumberIssuer issuer = new NumberIssuer();
         var tickets = new ArrayList<java.util.List<Integer>>();
