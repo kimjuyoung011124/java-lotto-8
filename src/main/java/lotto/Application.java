@@ -1,12 +1,11 @@
 package lotto;
 
 import camp.nextstep.edu.missionutils.Console;
-import java.util.List;
+import camp.nextstep.edu.missionutils.Randoms;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 
 public class Application {
     private static final int PRICE = 1000;
@@ -118,4 +117,4 @@ public class Application {
                 .setScale(1, RoundingMode.HALF_UP);
         System.out.println("총 수익률은 " + yield + "%입니다.");
     }
-
+}
