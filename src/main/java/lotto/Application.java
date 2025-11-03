@@ -13,11 +13,11 @@ public class Application {
         int count = amount / PRICE;
         System.out.println(count + "개를 구매했습니다.");
 
-        List<Lotto> tickets = issueTickets(count);     // 발행 목록 보관
+        List<Lotto> tickets = issueTickets(count);
         printTickets(tickets);
 
-        WinningNumbers winning = readWinningNumbers();  // step2 당첨/보너스 입력
-        Result result = evaluate(tickets, winning);     // step3 평가 > 출력
+        WinningNumbers winning = readWinningNumbers();
+        Result result = evaluate(tickets, winning);
         printStatistics(result, amount);
     }
 
@@ -29,7 +29,7 @@ public class Application {
                 Validator.validateAmount(amount);
                 return amount;
             } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage()); // [ERROR]로 시작
+                System.out.println(e.getMessage()); // [ERROR]...
             }
         }
     }
@@ -48,7 +48,6 @@ public class Application {
                 System.out.println("당첨 번호를 입력해 주세요.");
                 List<Integer> mains = Parser.parseIntsByComma(Console.readLine());
                 Validator.validateSixNumbers(mains);
-
                 int bonus = readBonus(mains);
                 return new WinningNumbers(mains, bonus);
             } catch (IllegalArgumentException e) {
@@ -74,22 +73,19 @@ public class Application {
         NumberIssuer issuer = new NumberIssuer();
         List<Lotto> tickets = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            tickets.add(issuer.issueOne());
+            tickets.add(issuer.issueOne());      // Randoms 주입됨(테스트에서 제어)
         }
         return tickets;
     }
 
     private static void printTickets(List<Lotto> tickets) {
-        for (Lotto lotto : tickets) {
-            System.out.println(lotto); // toString() 또는 lotto.numbers()
-        }
+        for (Lotto lotto : tickets) System.out.println(lotto);
     }
 
     private static Result evaluate(List<Lotto> tickets, WinningNumbers winning) {
         Result result = new Result();
         Set<Integer> mains = winning.mains();
         int bonus = winning.bonus();
-
         for (Lotto lotto : tickets) {
             List<Integer> nums = lotto.numbers();
             int match = countMatch(nums, mains);
@@ -101,9 +97,7 @@ public class Application {
 
     private static int countMatch(List<Integer> ticket, Set<Integer> mains) {
         int cnt = 0;
-        for (int n : ticket) {
-            if (mains.contains(n)) cnt++;
-        }
+        for (int n : ticket) if (mains.contains(n)) cnt++;
         return cnt;
     }
 
