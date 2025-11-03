@@ -5,10 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public final class NumberIssuer {
-
-    public List<Integer> issueOne() {
+    public Lotto issueOne() {
         List<Integer> nums = Randoms.pickUniqueNumbersInRange(1, 45, 6);
-        Collections.sort(nums);          
-        return new Lotto (nums);                   
+        Collections.sort(nums);                  
+        return new Lotto(nums);                  
     }
 }
