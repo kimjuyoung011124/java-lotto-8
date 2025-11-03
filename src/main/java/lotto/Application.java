@@ -1,11 +1,9 @@
 package lotto;
 
 import camp.nextstep.edu.missionutils.Console;
-import camp.nextstep.edu.missionutils.Randoms;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-
 
 public class Application {
     private static final int PRICE = 1000;
@@ -14,12 +12,12 @@ public class Application {
         int amount = readAmount();
         int count = amount / PRICE;
         System.out.println(count + "개를 구매했습니다.");
-        printTickets(count);
-        var tickets = issueTickets(count);          // 발행 목록 보관
+
+        List<Lotto> tickets = issueTickets(count);     // 발행 목록 보관
         printTickets(tickets);
 
-        WinningNumbers winning = readWinningNumbers(); // step2 당첨/보너스입력
-        Result result = evaluate(tickets, winning); // step3 평가 > 출력
+        WinningNumbers winning = readWinningNumbers();  // step2 당첨/보너스 입력
+        Result result = evaluate(tickets, winning);     // step3 평가 > 출력
         printStatistics(result, amount);
     }
 
@@ -37,22 +35,18 @@ public class Application {
     }
 
     private static int parseInt(String s) {
-        try { return Integer.parseInt(s.trim()); }
-        catch (NumberFormatException e) {
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException("[ERROR] 숫자만 입력 가능합니다.");
         }
     }
 
-    private static void printTickets(java.util.List<java.util.List<Integer>> tickets) {
-        for (var numbers : tickets) System.out.println(numbers);
-    } //printTickets(int count) 대신 목록 출력으로 교
-
-    
     private static WinningNumbers readWinningNumbers() {
         while (true) {
             try {
                 System.out.println("당첨 번호를 입력해 주세요.");
-                List<Integer> mains = Parser.parseIntsByComma(camp.nextstep.edu.missionutils.Console.readLine());
+                List<Integer> mains = Parser.parseIntsByComma(Console.readLine());
                 Validator.validateSixNumbers(mains);
 
                 int bonus = readBonus(mains);
@@ -62,11 +56,12 @@ public class Application {
             }
         }
     }
+
     private static int readBonus(List<Integer> mains) {
         while (true) {
             try {
                 System.out.println("보너스 번호를 입력해 주세요.");
-                int bonus = Parser.parseInt(camp.nextstep.edu.missionutils.Console.readLine());
+                int bonus = Parser.parseInt(Console.readLine());
                 Validator.validateBonus(bonus, Set.copyOf(mains));
                 return bonus;
             } catch (IllegalArgumentException e) {
@@ -75,28 +70,40 @@ public class Application {
         }
     }
 
-    private static java.util.List<java.util.List<Integer>> issueTickets(int count) {
+    private static List<Lotto> issueTickets(int count) {
         NumberIssuer issuer = new NumberIssuer();
-        var tickets = new ArrayList<java.util.List<Integer>>();
-        for (int i = 0; i < count; i++) tickets.add(issuer.issueOne());
+        List<Lotto> tickets = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            tickets.add(issuer.issueOne());
+        }
         return tickets;
     }
 
-    private static Result evaluate(java.util.List<java.util.List<Integer>> tickets, WinningNumbers winning) {
+    private static void printTickets(List<Lotto> tickets) {
+        for (Lotto lotto : tickets) {
+            System.out.println(lotto); // toString() 또는 lotto.numbers()
+        }
+    }
+
+    private static Result evaluate(List<Lotto> tickets, WinningNumbers winning) {
         Result result = new Result();
         Set<Integer> mains = winning.mains();
         int bonus = winning.bonus();
 
-        for (var t : tickets) {
-            int match = countMatch(t, mains);
-            boolean bonusMatched = t.contains(bonus);
+        for (Lotto lotto : tickets) {
+            List<Integer> nums = lotto.numbers();
+            int match = countMatch(nums, mains);
+            boolean bonusMatched = nums.contains(bonus);
             result.add(Rank.of(match, bonusMatched));
         }
         return result;
     }
-    private static int countMatch(java.util.List<Integer> ticket, Set<Integer> mains) {
+
+    private static int countMatch(List<Integer> ticket, Set<Integer> mains) {
         int cnt = 0;
-        for (int n : ticket) if (mains.contains(n)) cnt++;
+        for (int n : ticket) {
+            if (mains.contains(n)) cnt++;
+        }
         return cnt;
     }
 
@@ -115,6 +122,8 @@ public class Application {
                 .divide(BigDecimal.valueOf(amount), 4, RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(100))
                 .setScale(1, RoundingMode.HALF_UP);
+
         System.out.println("총 수익률은 " + yield + "%입니다.");
     }
 }
+
